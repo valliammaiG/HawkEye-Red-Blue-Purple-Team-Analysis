@@ -1,27 +1,42 @@
-# HawkEye Red Team / Blue Team / Purple Team Analysis
+# SOC Detection & Response Project
 
-## Project Overview
-This repository documents a defensive security analysis of the HawkEye malware lab using the supplied `stealer.pcap` packet capture.
+A working set of SIEM correlation rules, incident-investigation reports, and a
+dashboard design, built from analysis of a simulated multi-stage intrusion
+(an invoice-phishing malware infection with follow-on Active Directory
+reconnaissance and a separate SSH brute-force/persistence scenario).
 
-The analysis is divided into:
-- Red Team: attack reconstruction
-- Blue Team: forensic evidence and detection/containment
-- Purple Team: MITRE ATT&CK mapping and defensive gap analysis
-- Handover: executive summary and recommendations
+**Live preview:** see `index.html` (deployed via GitHub Pages — link in repo "About" section)
 
-> **Evidence note:** The PCAP provides strong evidence of payload download and subsequent credential/keylogging-data exfiltration. It does **not** by itself prove the original phishing email or the exact local command used to execute the downloaded executable. Those points are therefore marked as lab-context/unsupported-by-PCAP rather than invented.
+## Structure
 
-## Key Findings
-- Victim/internal host: `10.4.10.132`
-- Malware download server: `217.182.138.150`
-- Downloaded file: `tkraw_Protected99.exe`
-- Download URL: `http://proforma-invoices.com/proforma/tkraw_Protected99.exe`
-- Downloaded PE MD5: `71826ba081e303866ce2a2534491a2f7`
-- Downloaded PE SHA-256: `62099532750dad1054b127689680c38590033fa0bdfa4fb40c7b4dcb2607fb11`
-- SMTP exfiltration server: `23.229.162.69:587`
-- Exfiltration protocol: SMTP submission
-- Repeated behavior: approximately every 10 minutes in the capture
-- Captured content includes browser/account credentials and email configuration data, indicating keylogging/credential-stealing behavior.
+```
+├── detection-rules/     # Sigma & YARA rules, ready to load into a SIEM/YARA scanner
+│   ├── credential_stuffing.yml
+│   ├── dns_tunnelling.yml
+│   ├── powershell_exploitation.yml
+│   ├── scheduled_task_persistence.yml
+│   └── suspicious_packed_dropper.yar
+├── reports/              # Incident investigation write-ups
+│   ├── hawkeye-red-blue-purple.md
+│   ├── apt-simulation-report.md
+│   ├── cyberdefenders-hawkeye-investigation.md
+│   └── brutus-sherlock-findings.md
+├── dashboards/
+│   └── soc-dashboard-spec.md
+└── index.html            # Live dashboard preview
+```
 
-## Scope
-This repository contains analysis of the provided lab capture only. Credentials found in the capture are intentionally not reproduced.
+## What this project covers
+- **Detection engineering** — custom Sigma rules for credential stuffing, DNS
+  tunnelling, PowerShell abuse, and scheduled-task persistence, each with
+  documented detection logic and false-positive considerations.
+- **Malware analysis** — a YARA rule for a packed dropper identified during
+  PCAP investigation.
+- **Incident response** — full investigation reports reconstructing attack
+  chains from network captures and Unix auth logs, mapped to MITRE ATT&CK.
+- **SOC tooling** — a dashboard design spec for visualizing brute-force,
+  privilege-escalation, and exfiltration activity in Kibana/ELK.
+
+## Author
+Valliammai G — B.Tech Computer Science & Engineering (Cybersecurity), SRM
+Institute of Science and Technology · Fortinet Certified Associate (FCA)
